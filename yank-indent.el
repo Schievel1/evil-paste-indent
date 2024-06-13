@@ -123,8 +123,12 @@ prefix argument is given during pasting."
   :lighter " YI"
   :group 'evil-paste-indent
   (if evil-paste-indent-mode
-      (advice-add 'evil-paste-after :around #'evil-paste-indent--advice
-        (advice-remove 'evil-paste-after #'evil-paste-indent--advice))))
+      (progn
+        (advice-add 'evil-paste-after :around #'evil-paste-indent--advice)
+        (advice-add 'evil-paste-before :around #'evil-paste-indent--advice)
+        (progn
+          (advice-remove 'evil-paste-after #'evil-paste-indent--advice)
+          (advice-remove 'evil-paste-after #'evil-paste-indent--advice)))))
 
 ;;;###autoload
 (define-globalized-minor-mode global-evil-paste-indent-mode
