@@ -2,14 +2,14 @@ This is an evil-mode friendly version of [[https://github.com/jimeh/yank-indent]
 
 * Features
 
-- ~evil-paste-indent-mode~ minor-mode that automatically calls `indent-region` on
+- ~evil-paste-indent-mode~ minor-mode that automatically calls ~indent-region~ on
   pasted text that is pasted using evil modes ~evil-paste-after~ / ~evil-paste-before~.
-- `global-evil-paste-indent-mode` which is a set-it-and-forget-it style global mode
-  that enables `evil-paste-indent-mode` in relevant buffers, with a sensible default
+- ~global-evil-paste-indent-mode~ which is a set-it-and-forget-it style global mode
+  that enables ~evil-paste-indent-mode~ in relevant buffers, with a sensible default
   list of major-modes to exclude.
-- By default does not trigger `indent-region` if pasted text is longer than 5000
+- By default does not trigger ~indent-region~ if pasted text is longer than 5000
   characters. This threshold can be can be customized with
-  `evil-paste-indent-threshold`.
+  ~evil-paste-indent-threshold~.
 
 * Installation
 
