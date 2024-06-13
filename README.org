@@ -21,6 +21,18 @@ This is an evil-mode friendly version of [[https://github.com/jimeh/yank-indent]
   :config (global-evil-paste-indent-mode t))
 #+end_src
 
+** Doom Emacs
+in ~$DOOMDIR/packages.el~
+#+begin_src  elisp
+(package! evil-paste-indent
+   :recipe (:host github :repo "Schievel1/evil-paste-indent"))
+#+end_src
+in ~$DOOMDIR/config.el~
+#+begin_src elisp
+(use-package! evil-paste-indent
+  :config (global-evil-paste-indent-mode t))
+#+end_src
+
 ** Manual
 
 Place `evil-paste-indent.el` somewhere in your `load-path` and require it. For example
