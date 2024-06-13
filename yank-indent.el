@@ -150,8 +150,7 @@ are met:
   `evil-paste-indent-threshold'."
   (evil-with-single-undo
     (apply orig-fun args)
-    (if (and (memq this-command '(evil-paste-after evil-paste-before))
-         evil-paste-indent-mode
+    (if (and evil-paste-indent-mode
          (not current-prefix-arg))
         (let ((beg (evil-get-marker ?\[))
               (end (evil-get-marker ?\]))
