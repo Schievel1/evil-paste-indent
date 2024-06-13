@@ -65,14 +65,12 @@ hook to relevant major-modes, or even manually toggle it on and off with
 To skip the indent operation for a single evil-paste-before/after command, use a prefix command, so
 ~1 p~ / ~1 P~ instead of just ~p~ / ~P~.
 
-
-
 Keep in mind that the include/exclude major-mode customizations only affect the
 global mode and which buffers it enables ~evil-paste-indent-mode~ in. If you
 explicitly enable ~evil-paste-indent-mode~ in a buffer, it will operate like normal
 regardless of what major-mode the buffer is using.
 
-## Alternative Packages
+* Alternative Packages
 
 - [[https://github.com/mattfidler/auto-indent-mode.el][auto-indent-mode]]
   ([[https://melpa.org/#/auto-indent-mode][melpa]]): Triggers indentation in a whole suite of scenarios, more or less trying to ensure everything is alway correctly indented. This also includes indenting any yanked regions. Does not seem to support any thresholds to avoid triggering indentation for large buffers/yanked text.
