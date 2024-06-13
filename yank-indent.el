@@ -1,18 +1,18 @@
-;;; yank-indent.el --- Automatically indent yanked text -*- lexical-binding: t -*-
+;;; evil-paste-indent.el --- Automatically indent text that is pasted with evil mode -*- lexical-binding: t -*-
 
-;; Author: Jim Myhrberg <contact@jimeh.me>
-;; URL: https://github.com/jimeh/yank-indent
-;; Keywords: convenience, yank, indent
+;; Author: Jim Myhrberg <contact@jimeh.me>, Pascal Jaeger <pascal.jaeger@leimstift.de>
+;; URL: https://github.com/Schievel1/evil-paste-indent
+;; Keywords: convenience, paste, indent
 ;; Package-Requires: ((emacs "25.1"))
 ;; x-release-please-start-version
-;; Version: 0.3.0
+;; Version: 0.0.1
 ;; x-release-please-end
 
 ;; This file is not part of GNU Emacs.
 
 ;;; License:
 ;;
-;; Copyright (c) 2023 Jim Myhrberg
+;; Copyright (c) 2023 Jim Myhrberg, Pascal Jaeger
 ;;
 ;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;; of this software and associated documentation files (the "Software"), to deal
@@ -34,67 +34,52 @@
 
 ;;; Commentary:
 ;;
-;; Automatically indent yanked regions when yank-indent-mode is enabled.
+;; Automatically indent pasted regions when evil-paste-indent-mode is enabled.
 
 ;;; Code:
 
-(defgroup yank-indent nil
-  "Customization options for the yank-indent package.
+(defgroup evil-paste-indent nil
+  "Customization options for the evil-paste-indent package.
 
-The yank-indent package provides functionality to automatically
-indent yanked text according to the current mode's indentation
+The evil-paste-indent package provides functionality to automatically
+indent pasted text according to the current mode's indentation
 rules. This group contains customization options for controlling
-the behavior of `yank-indent-mode' and `global-yank-indent-mode'."
+the behavior of `evil-paste-indent-mode' and `global-evil-paste-indent-mode'."
   :group 'editing)
 
-(defcustom yank-indent-threshold 5000
-  "Max characters in yanked region to trigger auto indentation.
+(defcustom evil-paste-indent-threshold 5000
+  "Max characters in pasted region to trigger auto indentation.
 
-If the yanked region contains more characters than the value
-specified by `yank-indent-threshold', the automatic indentation
+If the pasted region contains more characters than the value
+specified by `evil-paste-indent-threshold', the automatic indentation
 will not occur. This helps prevent performance issues when
 working with large blocks of text."
   :type 'number)
 
-(define-obsolete-variable-alias
-  'yank-indent-derived-modes
-  'yank-indent-global-derived-modes
-  "yank-indent 0.2.0")
+(defcustom evil-paste-indent-global-derived-modes '(prog-mode tex-mode)
+  "Derived major modes where `global-evil-paste-indent-mode' enables `evil-paste-indent-mode'.
 
-(defcustom yank-indent-global-derived-modes '(prog-mode tex-mode)
-  "Derived major modes where `global-yank-indent-mode' enables `yank-indent-mode'.
-
-When `global-yank-indent-mode' is enabled, it activates
-`yank-indent-mode' in buffers with major modes derived from those
+When `global-evil-paste-indent-mode' is enabled, it activates
+`evil-paste-indent-mode' in buffers with major modes derived from those
 listed in this variable. This is useful when you want to enable
-`yank-indent-mode' for all modes that inherit from a specific
+`evil-paste-indent-mode' for all modes that inherit from a specific
 mode, such as `prog-mode' for programming modes or `text-mode'
 for text editing modes."
   :type '(repeat symbol))
 
-(define-obsolete-variable-alias
-  'yank-indent-exact-modes
-  'yank-indent-global-exact-modes
-  "yank-indent 0.2.0")
+(defcustom evil-paste-indent-global-exact-modes '()
+  "Major modes where `global-evil-paste-indent-mode' enables `evil-paste-indent-mode'.
 
-(defcustom yank-indent-global-exact-modes '()
-  "Major modes where `global-yank-indent-mode' enables `yank-indent-mode'.
-
-When `global-yank-indent-mode' is enabled, it activates
-`yank-indent-mode' in buffers with major modes listed in this
-variable. Unlike `yank-indent-global-derived-modes',
-`yank-indent-mode' will not be activated in modes derived from
+When `global-evil-paste-indent-mode' is enabled, it activates
+`evil-paste-indent-mode' in buffers with major modes listed in this
+variable. Unlike `evil-paste-indent-global-derived-modes',
+`evil-paste-indent-mode' will not be activated in modes derived from
 those listed here. Use this variable to list specific modes where
-you want `yank-indent-mode' to be enabled without affecting their
+you want `evil-paste-indent-mode' to be enabled without affecting their
 derived modes."
   :type '(repeat symbol))
 
-(define-obsolete-variable-alias
-  'yank-indent-excluded-modes
-  'yank-indent-global-excluded-modes
-  "yank-indent 0.2.0")
-
-(defcustom yank-indent-global-excluded-modes '(cmake-ts-mode
+(defcustom evil-paste-indent-global-excluded-modes '(cmake-ts-mode)
                                                coffee-mode
                                                conf-mode
                                                haml-mode
@@ -108,65 +93,67 @@ derived modes."
                                                python-ts-mode
                                                slim-mode
                                                yaml-mode
-                                               yaml-ts-mode)
-  "Major modes where `global-yank-indent-mode' does not enable `yank-indent-mode'.
+                                               yaml-ts-mode
+  "Major modes where `global-evil-paste-indent-mode' does not enable `evil-paste-indent-mode'.
 
-`global-yank-indent-mode' will not activate `yank-indent-mode' in
+`global-evil-paste-indent-mode' will not activate `evil-paste-indent-mode' in
 buffers with major modes listed in this variable or their derived
 modes. This list takes precedence over
-`yank-indent-global-derived-modes' and
-`yank-indent-global-exact-modes'. Use this variable to exclude
+`evil-paste-indent-global-derived-modes' and
+`evil-paste-indent-global-exact-modes'. Use this variable to exclude
 specific modes and their derived modes from having
-`yank-indent-mode' enabled."
+`evil-paste-indent-mode' enabled."
   :type '(repeat symbol))
 
-(defun yank-indent--should-enable-p ()
+(defun evil-paste-indent--should-enable-p ()
   "Return non-nil if current mode should be indented."
   (and (not (minibufferp))
-       (not (member major-mode yank-indent-global-excluded-modes))
-       (or (member major-mode yank-indent-global-exact-modes)
-           (apply #'derived-mode-p yank-indent-global-derived-modes))))
+       (not (member major-mode evil-paste-indent-global-excluded-modes))
+       (or (member major-mode evil-paste-indent-global-exact-modes)
+           (apply #'derived-mode-p evil-paste-indent-global-derived-modes))))
 
 ;;;###autoload
-(define-minor-mode yank-indent-mode
-  "Minor mode for automatically indenting yanked text.
+(define-minor-mode evil-paste-indent-mode
+  "Minor mode for automatically indenting pasted text.
 
-When enabled, this mode indents the yanked region according to
+When enabled, this mode indents the pasted region according to
 the current mode's indentation rules, provided that the region
-size is less than or equal to `yank-indent-threshold' and no
-prefix argument is given during yanking."
+size is less than or equal to `evil-paste-indent-threshold' and no
+prefix argument is given during pasting."
   :lighter " YI"
-  :group 'yank-indent
-  (if yank-indent-mode
-      (add-hook 'post-command-hook #'yank-indent--post-command-hook nil 'local)
-    (remove-hook 'post-command-hook #'yank-indent--post-command-hook 'local)))
+  :group 'evil-paste-indent
+  (if evil-paste-indent-mode
+      (advice-add 'evil-paste-after :around #'evil-paste-indent--advice
+        (advice-remove 'evil-paste-after #'evil-paste-indent--advice))))
 
 ;;;###autoload
-(define-globalized-minor-mode global-yank-indent-mode
-  yank-indent-mode
+(define-globalized-minor-mode global-evil-paste-indent-mode
+  evil-paste-indent-mode
   (lambda ()
-    (when (yank-indent--should-enable-p)
-      (yank-indent-mode 1))))
+    (when (evil-paste-indent--should-enable-p)
+      (evil-paste-indent-mode 1))))
 
-(defun yank-indent--post-command-hook ()
-  "Conditionally indent yanked text.
+(defun evil-paste-indent--advice (orig-fun &rest args)
+  "Conditionally indent pasted text.
 
 Indentation is triggered only if all of the following conditions
 are met:
 
-- `this-command' is `yank' or `yank-pop'.
-- `yank-indent-mode' is enabled.
+- `this-command' is `evil-paste-after' or `evil-paste-before'.
+- `evil-paste-indent-mode' is enabled.
 - Prefix argument was not provided.
-- Region size that was yanked is less than or equal to
-  `yank-indent-threshold'."
-  (if (and (memq this-command '(yank yank-pop))
-           yank-indent-mode
-           (not current-prefix-arg))
-      (let ((beg (region-beginning))
-            (end (region-end))
-            (mark-even-if-inactive transient-mark-mode))
-        (if (<= (- end beg) yank-indent-threshold)
-            (indent-region beg end)))))
+- Region size that was pasted is less than or equal to
+  `evil-paste-indent-threshold'."
+  (evil-with-single-undo
+    (apply orig-fun args)
+    (if (and (memq this-command '(evil-paste-after evil-paste-before))
+         evil-paste-indent-mode
+         (not current-prefix-arg))
+        (let ((beg (evil-get-marker ?\[))
+              (end (evil-get-marker ?\]))
+              (mark-even-if-inactive transient-mark-mode))
+          (if (<= (- end beg) evil-paste-indent-threshold)
+              (indent-region beg end))))))
 
-(provide 'yank-indent)
-;;; yank-indent.el ends here
+(provide 'evil-paste-indent)
+;;; evil-paste-indent.el ends here

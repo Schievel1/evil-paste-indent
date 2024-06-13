@@ -1,0 +1,64 @@
+This is an evil-mode friendly version of [[https://github.com/jimeh/yank-indent][yank-indent]] by jimeh.
+
+* Features
+
+- ~evil-paste-indent-mode~ minor-mode that automatically calls `indent-region` on
+  pasted text that is pasted using evil modes ~evil-paste-after~ / ~evil-paste-before~.
+- `global-evil-paste-indent-mode` which is a set-it-and-forget-it style global mode
+  that enables `evil-paste-indent-mode` in relevant buffers, with a sensible default
+  list of major-modes to exclude.
+- By default does not trigger `indent-region` if pasted text is longer than 5000
+  characters. This threshold can be can be customized with
+  `evil-paste-indent-threshold`.
+
+* Installation
+
+** use-package + straight.el
+
+#+begin_src elisp
+(use-package evil-paste-indent
+  :straight (:host github :repo "Schievel/evil-paste-indent")
+  :config (global-evil-paste-indent-mode t))
+#+end_src
+
+** Manual
+
+Place `evil-paste-indent.el` somewhere in your `load-path` and require it. For example
+`~/.emacs.d/vendor`:
+
+#+begin_src elisp
+(add-to-list 'load-path "~/.emacs.d/vendor")
+(require 'evil-paste-indent)
+(global-evil-paste-indent-mode t)
+#+end_src
+
+* Usage
+
+** ~global-yank-indent-mode~
+
+With ~global-evil-paste-indent-mode~ enabled, you will find that ~evil-paste-indent-mode~ is
+automatically enabled in relevant buffers. The defaults will specifically
+exclude common languages which are indentation sensitive like Python, YAML,
+Makefile, etc.
+
+For fine-grained control over which major-modes it is enabled in or not, see
+customization options with ~M-x customize-group RET evil-paste-indent~.
+
+** ~evil-paste-indent-mode~
+
+If you prefer not to use the global mode, you can add ~evil-paste-indent-mode~ as a
+hook to relevant major-modes, or even manually toggle it on and off with
+~M-x evil-paste-indent-mode~.
+
+To skip the indent operation for a single yank command, use a prefix command, so
+~C-u C-y~ instead of just ~C-y~.
+
+Keep in mind that the include/exclude major-mode customizations only affect the
+global mode and which buffers it enables ~evil-paste-indent-mode~ in. If you
+explicitly enable ~evil-paste-indent-mode~ in a buffer, it will operate like normal
+regardless of what major-mode the buffer is using.
+
+## Alternative Packages
+
+- [[https://github.com/mattfidler/auto-indent-mode.el][auto-indent-mode]]
+  ([[https://melpa.org/#/auto-indent-mode][melpa]]): Triggers indentation in a whole suite of scenarios, more or less trying to ensure everything is alway correctly indented. This also includes indenting any yanked regions. Does not seem to support any thresholds to avoid triggering indentation for large buffers/yanked text.
