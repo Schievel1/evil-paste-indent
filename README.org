@@ -48,6 +48,10 @@ Place `evil-paste-indent.el` somewhere in your `load-path` and require it. For e
 
 ** ~global-evil-paste-indent-mode~
 
+~global-evil-paste-indent-mode~ needs to be enabled in order for evil-paste-indent-mode to work.
+If ~evil-paste-indent-mode~ is activated in a buffer and ~global-evil-paste-indent-mode~ is not activated,
+the minor mode will not be activated.
+
 With ~global-evil-paste-indent-mode~ enabled, you will find that ~evil-paste-indent-mode~ is
 automatically enabled in relevant buffers. The defaults will specifically
 exclude common languages which are indentation sensitive like Python, YAML,

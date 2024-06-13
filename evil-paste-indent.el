@@ -79,7 +79,7 @@ you want `evil-paste-indent-mode' to be enabled without affecting their
 derived modes."
   :type '(repeat symbol))
 
-(defcustom evil-paste-indent-global-excluded-modes '(cmake-ts-mode)
+(defcustom evil-paste-indent-global-excluded-modes '(cmake-ts-mode
                                                coffee-mode
                                                conf-mode
                                                haml-mode
@@ -93,7 +93,7 @@ derived modes."
                                                python-ts-mode
                                                slim-mode
                                                yaml-mode
-                                               yaml-ts-mode
+                                               yaml-ts-mode)
   "Major modes where `global-evil-paste-indent-mode' does not enable `evil-paste-indent-mode'.
 
 `global-evil-paste-indent-mode' will not activate `evil-paste-indent-mode' in
@@ -120,22 +120,26 @@ When enabled, this mode indents the pasted region according to
 the current mode's indentation rules, provided that the region
 size is less than or equal to `evil-paste-indent-threshold' and no
 prefix argument is given during pasting."
-  :lighter " YI"
+  :lighter " EPI"
   :group 'evil-paste-indent
-  (if evil-paste-indent-mode
-      (progn
-        (advice-add 'evil-paste-after :around #'evil-paste-indent--advice)
-        (advice-add 'evil-paste-before :around #'evil-paste-indent--advice)
-        (progn
-          (advice-remove 'evil-paste-after #'evil-paste-indent--advice)
-          (advice-remove 'evil-paste-after #'evil-paste-indent--advice)))))
+  (unless global-evil-paste-indent-mode
+    (user-error "evil-paste-indent-mode is deactivated when global-evil-paste-indent-mode is not active.")
+    (evil-paste-indent-mode -1)))
 
 ;;;###autoload
 (define-globalized-minor-mode global-evil-paste-indent-mode
   evil-paste-indent-mode
   (lambda ()
     (when (evil-paste-indent--should-enable-p)
-      (evil-paste-indent-mode 1))))
+      (evil-paste-indent-mode 1))) ;; turn-on function
+  (if global-evil-paste-indent-mode
+      (progn
+        (advice-add 'evil-paste-after :around #'evil-paste-indent--advice)
+        (advice-add 'evil-paste-before :around #'evil-paste-indent--advice))
+        (progn
+          (advice-remove 'evil-paste-after #'evil-paste-indent--advice)
+          (advice-remove 'evil-paste-after #'evil-paste-indent--advice))))
+
 
 (defun evil-paste-indent--advice (orig-fun &rest args)
   "Conditionally indent pasted text.
