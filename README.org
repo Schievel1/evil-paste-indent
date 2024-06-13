@@ -46,7 +46,7 @@ Place `evil-paste-indent.el` somewhere in your `load-path` and require it. For e
 
 * Usage
 
-** ~global-yank-indent-mode~
+** ~global-evil-paste-indent-mode~
 
 With ~global-evil-paste-indent-mode~ enabled, you will find that ~evil-paste-indent-mode~ is
 automatically enabled in relevant buffers. The defaults will specifically
@@ -62,8 +62,10 @@ If you prefer not to use the global mode, you can add ~evil-paste-indent-mode~ a
 hook to relevant major-modes, or even manually toggle it on and off with
 ~M-x evil-paste-indent-mode~.
 
-To skip the indent operation for a single yank command, use a prefix command, so
-~C-u C-y~ instead of just ~C-y~.
+To skip the indent operation for a single evil-paste-before/after command, use a prefix command, so
+~1 p~ / ~1 P~ instead of just ~p~ / ~P~.
+
+
 
 Keep in mind that the include/exclude major-mode customizations only affect the
 global mode and which buffers it enables ~evil-paste-indent-mode~ in. If you
