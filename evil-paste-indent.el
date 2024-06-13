@@ -3,7 +3,7 @@
 ;; Author: Jim Myhrberg <contact@jimeh.me>, Pascal Jaeger <pascal.jaeger@leimstift.de>
 ;; URL: https://github.com/Schievel1/evil-paste-indent
 ;; Keywords: convenience, paste, indent
-;; Package-Requires: ((emacs "25.1"))
+;; Package-Requires: ((emacs "25.1") (evil "1.14.0"))
 ;; x-release-please-start-version
 ;; Version: 0.0.1
 ;; x-release-please-end
@@ -80,20 +80,20 @@ derived modes."
   :type '(repeat symbol))
 
 (defcustom evil-paste-indent-global-excluded-modes '(cmake-ts-mode
-                                               coffee-mode
-                                               conf-mode
-                                               haml-mode
-                                               makefile-automake-mode
-                                               makefile-bsdmake-mode
-                                               makefile-gmake-mode
-                                               makefile-imake-mode
-                                               makefile-makepp-mode
-                                               makefile-mode
-                                               python-mode
-                                               python-ts-mode
-                                               slim-mode
-                                               yaml-mode
-                                               yaml-ts-mode)
+                                                     coffee-mode
+                                                     conf-mode
+                                                     haml-mode
+                                                     makefile-automake-mode
+                                                     makefile-bsdmake-mode
+                                                     makefile-gmake-mode
+                                                     makefile-imake-mode
+                                                     makefile-makepp-mode
+                                                     makefile-mode
+                                                     python-mode
+                                                     python-ts-mode
+                                                     slim-mode
+                                                     yaml-mode
+                                                     yaml-ts-mode)
   "Major modes where `global-evil-paste-indent-mode' does not enable `evil-paste-indent-mode'.
 
 `global-evil-paste-indent-mode' will not activate `evil-paste-indent-mode' in
@@ -136,9 +136,9 @@ prefix argument is given during pasting."
       (progn
         (advice-add 'evil-paste-after :around #'evil-paste-indent--advice)
         (advice-add 'evil-paste-before :around #'evil-paste-indent--advice))
-        (progn
-          (advice-remove 'evil-paste-after #'evil-paste-indent--advice)
-          (advice-remove 'evil-paste-after #'evil-paste-indent--advice))))
+    (progn
+      (advice-remove 'evil-paste-after #'evil-paste-indent--advice)
+      (advice-remove 'evil-paste-after #'evil-paste-indent--advice))))
 
 
 (defun evil-paste-indent--advice (orig-fun &rest args)
