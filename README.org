@@ -62,9 +62,7 @@ customization options with ~M-x customize-group RET evil-paste-indent~.
 
 ** ~evil-paste-indent-mode~
 
-If you prefer not to use the global mode, you can add ~evil-paste-indent-mode~ as a
-hook to relevant major-modes, or even manually toggle it on and off with
-~M-x evil-paste-indent-mode~.
+You can manually toggle ~evil-past-indent-mode~ on and off with ~M-x evil-paste-indent-mode~. However, ~global-evil-paste-indent-mode~ needs to be active for it to work.
 
 To skip the indent operation for a single evil-paste-before/after command, use a prefix command, so
 ~1 p~ / ~1 P~ instead of just ~p~ / ~P~.
