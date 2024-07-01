@@ -3,7 +3,7 @@
 ;; Author: Jim Myhrberg <contact@jimeh.me>, Pascal Jaeger <pascal.jaeger@leimstift.de>
 ;; URL: https://github.com/Schievel1/evil-paste-indent
 ;; Keywords: convenience, paste, indent
-;; Package-Requires: ((emacs "25.1") (evil "1.14.0"))
+;; Package-Requires: ((emacs "29.1") (evil "1.14.0"))
 ;; x-release-please-start-version
 ;; Version: 0.0.1
 ;; x-release-please-end
@@ -152,7 +152,7 @@ are met:
 - Prefix argument was not provided.
 - Region size that was pasted is less than or equal to
   `evil-paste-indent-threshold'."
-  (evil-with-single-undo
+  (with-undo-amalgamate
     (apply orig-fun args)
     (if (and evil-paste-indent-mode
          (not current-prefix-arg))
